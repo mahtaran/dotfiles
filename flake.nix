@@ -14,6 +14,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    impermanence = {
+      url = "github:nix-community/impermanence";
+    };
+
     nur = {
       url = "github:nix-community/NUR";
     };
@@ -39,6 +43,7 @@
     nixpkgs,
     disko,
     lanzaboote,
+    impermanence,
     nur,
     home-manager,
     alejandra,
@@ -79,6 +84,7 @@
               };
             };
           })
+          impermanence.nixosModules.impermanence
           nur.nixosModules.nur
           ./host/laptop/configuration.nix
           {

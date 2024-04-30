@@ -4,12 +4,11 @@
   inputs,
   ...
 }: {
-  home = {
-    # Home Manager needs a bit of information about you and the paths it should
-    # manage.
-    username = "mahtaran";
-    homeDirectory = "/home/mahtaran";
+  imports = [
+    inputs.impermanence.nixosModules.home-manager.impermanence
+  ];
 
+  home = {
     # This value determines the Home Manager release that your configuration is
     # compatible with. This helps avoid breakage when a new Home Manager release
     # introduces backwards incompatible changes.
@@ -18,6 +17,34 @@
     # want to update the value, then make sure to first check the Home Manager
     # release notes.
     stateVersion = "23.11"; # Please read the comment before changing.
+
+    # Home Manager needs a bit of information about you and the paths it should
+    # manage.
+    username = "mahtaran";
+    homeDirectory = "/home/mahtaran";
+
+    persistence."/persist/home/mahtaran" = {
+      directories = [
+        "Documents"
+        "Downloads"
+        "Music"
+        "Pictures"
+        "Videos"
+        ".gnupg"
+        ".ssh"
+        ".nixops"
+        ".local/share/keyrings"
+        ".local/share/direnv"
+        {
+          directory = ".local/share/Steam";
+          method = "symlink";
+        }
+      ];
+      files = [
+        ".screenrc"
+      ];
+      allowOther = true;
+    };
 
     # The home.packages option allows you to install Nix packages into your
     # environment.

@@ -71,7 +71,7 @@
             boot.initrd.systemd.enable = true;
             boot.loader.systemd-boot.enable = lib.mkForce false;
             boot.lanzaboote = {
-              enable = true;
+              enable = false;
               pkiBundle = "/etc/secureboot";
 
               configurationLimit = 5;

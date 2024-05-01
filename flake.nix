@@ -69,20 +69,20 @@
               pkgs.sbctl
             ];
             boot.initrd.systemd.enable = true;
-            boot.loader.systemd-boot.enable = true;
-            boot.lanzaboote = {
-              enable = false;
-              pkiBundle = "/etc/secureboot";
+            boot.loader.systemd-boot.enable = lib.mkForce true;
+            # boot.lanzaboote = {
+            #   enable = true;
+            #   pkiBundle = "/etc/secureboot";
 
-              configurationLimit = 5;
-              settings = {
-                auto-entries = true;
-                auto-firmware = true;
-                console-mode = "auto";
-                editor = false;
-                timeout = 10;
-              };
-            };
+            #   configurationLimit = 5;
+            #   settings = {
+            #     auto-entries = true;
+            #     auto-firmware = true;
+            #     console-mode = "auto";
+            #     editor = false;
+            #     timeout = 10;
+            #   };
+            # };
           })
           impermanence.nixosModules.impermanence
           nur.nixosModules.nur

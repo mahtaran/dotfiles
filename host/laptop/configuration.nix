@@ -44,8 +44,8 @@
     umount /btrfs_tmp
   '';
 
-  fileSystems."/persist/system".neededForBoot = true;
-  environment.persistence."/persist" = {
+  fileSystems."/persist".neededForBoot = true;
+  environment.persistence."/persist/system" = {
     hideMounts = true;
     directories = [
       "/var/log"

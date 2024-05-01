@@ -69,7 +69,7 @@
               pkgs.sbctl
             ];
             boot.initrd.systemd.enable = true;
-            boot.loader.systemd-boot.enable = lib.mkForce false;
+            boot.loader.systemd-boot.enable = true;
             boot.lanzaboote = {
               enable = false;
               pkiBundle = "/etc/secureboot";

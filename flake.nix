@@ -110,7 +110,7 @@
             inputs.impermanence.nixosModules.impermanence
             inputs.nur.nixosModules.nur
             ./host/laptop/configuration.nix
-            { environment.systemPackages = [ alejandra.defaultPackage.${system} ]; }
+            { environment.systemPackages = [ inputs.alejandra.defaultPackage.${system} ]; }
             inputs.home-manager.nixosModules.home-manager
             (
               { ... }:

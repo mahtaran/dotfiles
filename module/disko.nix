@@ -55,7 +55,11 @@
 
                 "@persist" = {
                   mountpoint = "/persist";
-                  mountOptions = [ "subvol=persist" ];
+                };
+
+                "@backup" = {
+                  mountpoint = "/backup";
+                  mountOptions = [ "compress=zstd" "noatime" ];
                 };
               };
             };

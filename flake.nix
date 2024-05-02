@@ -22,7 +22,7 @@
     };
 
     impermanence = {
-      url = "github:tmarkov/impermanence";
+      url = "github:nix-community/impermanence";
     };
 
     nur = {
@@ -91,20 +91,25 @@
               {
                 environment.systemPackages = [ pkgs.sbctl ];
                 boot.initrd.systemd.enable = true;
-                boot.loader.systemd-boot.enable = lib.mkForce true;
-                # boot.lanzaboote = {
-                #   enable = true;
-                #   pkiBundle = "/etc/secureboot";
+                # TODO make path more specific
+                boot = if builtins.pathExists /etc/secureboot then {
+                  loader.systemd-boot.enable = lib.mkForce false;
+                  lanzaboote = {
+                    enable = true;
+                    pkiBundle = "/etc/secureboot";
 
-                #   configurationLimit = 5;
-                #   settings = {
-                #     auto-entries = true;
-                #     auto-firmware = true;
-                #     console-mode = "auto";
-                #     editor = false;
-                #     timeout = 10;
-                #   };
-                # };
+                    configurationLimit = 5;
+                    settings = {
+                      auto-entries = true;
+                      auto-firmware = true;
+                      console-mode = "auto";
+                      editor = false;
+                      timeout = 10;
+                    };
+                  };
+                } else {
+                  boot.loader.systemd-boot.enable = true;
+                };
               }
             )
             inputs.impermanence.nixosModules.impermanence

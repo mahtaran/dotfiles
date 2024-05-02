@@ -82,10 +82,10 @@
             inherit systemSettings userSettings;
           };
           modules = [
-            inputs.sops-nix.nixosModules.sops
             inputs.disko.nixosModules.disko
             ./module/disko.nix
             inputs.lanzaboote.nixosModules.lanzaboote
+            inputs.sops-nix.nixosModules.sops
             inputs.impermanence.nixosModules.impermanence
             inputs.nur.nixosModules.nur
             ./host/feanor/configuration.nix

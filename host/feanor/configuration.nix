@@ -25,8 +25,9 @@
     # Only enable SOPS if the age key is available
     sops = {
       age = {
-        keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+        keyFile = "/persist/home/mahtaran/.config/sops/age/keys.txt";
         generateKey = true;
+        sshKeyPaths = ["/persist/etc/ssh/ssh_host_ed25519_key"];
       };
       secrets = {
         "mahtaran/password" = {

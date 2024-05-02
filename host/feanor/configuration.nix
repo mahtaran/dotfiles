@@ -142,8 +142,6 @@
       LC_TIME = "nl_NL.UTF-8";
     };
 
-    # Enable the Wayland windowing system.
-    services.desktopManager.plasma6.enable = true;
     # Tell Electron apps to use Wayland
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -151,12 +149,10 @@
       enable = true;
 
       displayManager = {
-        sddm = {
-          enable = true;
-          wayland.enable = true;
-        };
+        gdm.enable = true;
+        gnome.enable = true;
 
-        defaultSession = "plasma";
+        defaultSession = "gnome";
       };
 
       # Configure keymap

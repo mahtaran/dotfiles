@@ -24,11 +24,10 @@
 
     # Only enable SOPS if the age key is available
     sops = {
-      # age = {
-      #   keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
-      #   generateKey = true;
-      # };
-      gnupg.home = "/home/mahtaran/.gnupg";
+      age = {
+        keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+        generateKey = true;
+      };
       secrets = {
         "mahtaran/password" = {
           sopsFile = ../../secret/user/mahtaran/secrets.yaml;

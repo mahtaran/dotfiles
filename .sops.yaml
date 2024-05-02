@@ -1,10 +1,10 @@
 keys:
-  - &user_mahtaran C7FFB72E0527423AD470E132AA82C4EBCB1682E0
+  - &user_mahtaran age1k9lqlzmpumn2x5ravmyrtnu44nhwzqanu8s0wv57amccvtlsud0qc2wenc
   - &host_feanor age1m3fvful26zmrymxpv69ms2jj7cr4yksk65s2yg54sn5ehr9gp52s64tzcz
 creation_rules:
   - path_regex: secret/user/mahtaran/[^/]+\.yaml$
     key_groups:
-    - pgp:
+    - age:
       - *user_mahtaran
   - path_regex: secret/host/feanor/[^/]+\.yaml$
     key_groups:
@@ -12,7 +12,6 @@ creation_rules:
       - *host_feanor
   - path_regex: secret/[^/]+\.yaml$
     key_groups:
-    - pgp:
+    - age:
       - *user_mahtaran
-      age:
       - *host_feanor

@@ -50,6 +50,7 @@
     let
       systemSettings = {
         architecture = "x86_64-linux";
+        secureBoot = false;
         timezone = "Europe/Amsterdam";
         defaultLocale = "en_GB.UTF-8";
         extraLocaleSettings = {

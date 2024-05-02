@@ -203,11 +203,11 @@
       }
 
       # Set the password hash if SOPS is available
-      (lib.mkIf (builtins.pathExists ${sopsKeysPath}) {
+      (lib.mkIf (builtins.pathExists sopsKeysPath) {
         hashedPasswordFile = config.sops.secrets.password.path;
       })
       # Otherwise, set the default password "password"
-      (lib.mkIf (!builtins.pathExists ${sopsKeysPath}) {
+      (lib.mkIf (!builtins.pathExists sopsKeysPath) {
         password = "password";
       })
     ];

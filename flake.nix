@@ -48,6 +48,7 @@
   outputs =
     inputs@{ ... }:
     let
+      lib = inputs.nixpkgs.lib;
       systemSettings = {
         architecture = "x86_64-linux";
         timezone = "Europe/Amsterdam";
@@ -63,6 +64,8 @@
           LC_TELEPHONE = "nl_NL.UTF-8";
           LC_TIME = "nl_NL.UTF-8";
         };
+        # TODO make path more specific
+        secureBootKey = /etc/secureboot;
       };
       userSettings = {
         username = "mahtaran";
@@ -75,7 +78,7 @@
       formatter.${systemSettings.architecture} = inputs.alejandra.defaultPackage.${systemSettings.architecture};
 
       nixosConfigurations = {
-        feanor = inputs.nixpkgs.lib.nixosSystem rec {
+        feanor = lib.nixosSystem rec {
           system = systemSettings.architecture;
           specialArgs = {
             inherit inputs;
@@ -90,26 +93,31 @@
               { pkgs, lib, ... }:
               {
                 environment.systemPackages = [ pkgs.sbctl ];
-                boot.initrd.systemd.enable = true;
-                # TODO make path more specific
-                boot = if builtins.pathExists /etc/secureboot then {
-                  loader.systemd-boot.enable = lib.mkForce false;
-                  lanzaboote = {
-                    enable = true;
-                    pkiBundle = "/etc/secureboot";
+                boot = lib.mkMerge [
+                  {
+                    initrd.systemd.enable = true;
+                  }
+                  
+                  (lib.mkIf (builtins.pathExists systemSettings.secureBootKey) {
+                    loader.systemd-boot.enable = lib.mkForce false;
+                    lanzaboote = {
+                      enable = true;
+                      pkiBundle = "/etc/secureboot";
 
-                    configurationLimit = 5;
-                    settings = {
-                      auto-entries = true;
-                      auto-firmware = true;
-                      console-mode = "auto";
-                      editor = false;
-                      timeout = 10;
+                      configurationLimit = 5;
+                      settings = {
+                        auto-entries = true;
+                        auto-firmware = true;
+                        console-mode = "auto";
+                        editor = false;
+                        timeout = 10;
+                      };
                     };
-                  };
-                } else {
-                  boot.loader.systemd-boot.enable = true;
-                };
+                  })
+                  lib.mkIf (!builtins.pathExists systemSettings.secureBootKey) {
+                    boot.loader.systemd-boot.enable = true;
+                  }
+                ];
               }
             )
             inputs.impermanence.nixosModules.impermanence

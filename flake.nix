@@ -2,7 +2,14 @@
   description = "NixOS config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     disko = {
       url = "github:nix-community/disko";
@@ -15,7 +22,7 @@
     };
 
     impermanence = {
-      url = "github:nix-community/impermanence";
+      url = "github:tmarkov/impermanence";
     };
 
     nur = {
@@ -38,75 +45,93 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    disko,
-    lanzaboote,
-    impermanence,
-    nur,
-    home-manager,
-    alejandra,
-    code-insiders,
-    ...
-  } @ inputs: {
-    formatter.x86_64-linux = alejandra.defaultPackage.x86_64-linux;
+  outputs =
+    inputs@{ ... }:
+    let
+      systemSettings = {
+        architecture = "x86_64-linux";
+        timezone = "Europe/Amsterdam";
+        defaultLocale = "en_GB.UTF-8";
+        extraLocaleSettings = {
+          LC_ADDRESS = "nl_NL.UTF-8";
+          LC_IDENTIFICATION = "nl_NL.UTF-8";
+          LC_MEASUREMENT = "nl_NL.UTF-8";
+          LC_MONETARY = "nl_NL.UTF-8";
+          LC_NAME = "nl_NL.UTF-8";
+          LC_NUMERIC = "nl_NL.UTF-8";
+          LC_PAPER = "nl_NL.UTF-8";
+          LC_TELEPHONE = "nl_NL.UTF-8";
+          LC_TIME = "nl_NL.UTF-8";
+        };
+      };
+      userSettings = {
+        username = "mahtaran";
+        name = "Luka";
+        email = "luka.leer@gmail.com";
+        editor = "nano";
+      };
+    in
+    {
+      formatter.${systemSettings.architecture} = inputs.alejandra.defaultPackage.${systemSettings.architecture};
 
-    nixosConfigurations = {
-      laptop = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          disko.nixosModules.disko
-          ./module/disko.nix
-          lanzaboote.nixosModules.lanzaboote
-          ({
-            pkgs,
-            lib,
-            ...
-          }: {
-            environment.systemPackages = [
-              pkgs.sbctl
-            ];
-            boot.initrd.systemd.enable = true;
-            boot.loader.systemd-boot.enable = lib.mkForce true;
-            # boot.lanzaboote = {
-            #   enable = true;
-            #   pkiBundle = "/etc/secureboot";
+      nixosConfigurations = {
+        feanor = inputs.nixpkgs.lib.nixosSystem rec {
+          system = systemSettings.architecture;
+          specialArgs = {
+            inherit inputs;
+            inherit systemSettings userSettings;
+          };
+          modules = [
+            inputs.sops-nix.nixosModules.sops
+            inputs.disko.nixosModules.disko
+            ./module/disko.nix
+            inputs.lanzaboote.nixosModules.lanzaboote
+            (
+              { pkgs, lib, ... }:
+              {
+                environment.systemPackages = [ pkgs.sbctl ];
+                boot.initrd.systemd.enable = true;
+                boot.loader.systemd-boot.enable = lib.mkForce true;
+                # boot.lanzaboote = {
+                #   enable = true;
+                #   pkiBundle = "/etc/secureboot";
 
-            #   configurationLimit = 5;
-            #   settings = {
-            #     auto-entries = true;
-            #     auto-firmware = true;
-            #     console-mode = "auto";
-            #     editor = false;
-            #     timeout = 10;
-            #   };
-            # };
-          })
-          impermanence.nixosModules.impermanence
-          nur.nixosModules.nur
-          ./host/laptop/configuration.nix
-          {
-            environment.systemPackages = [
-              alejandra.defaultPackage.${system}
-            ];
-          }
-          home-manager.nixosModules.home-manager
-          ({...}: {
-            home-manager = {
-              extraSpecialArgs = {inherit self inputs;};
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              sharedModules = [ nur.hmModules.nur ];
-              
-              users = {
-                "mahtaran" = import ./user/mahtaran/home.nix;
-              };
-            };
-          })
-        ];
+                #   configurationLimit = 5;
+                #   settings = {
+                #     auto-entries = true;
+                #     auto-firmware = true;
+                #     console-mode = "auto";
+                #     editor = false;
+                #     timeout = 10;
+                #   };
+                # };
+              }
+            )
+            inputs.impermanence.nixosModules.impermanence
+            inputs.nur.nixosModules.nur
+            ./host/laptop/configuration.nix
+            { environment.systemPackages = [ alejandra.defaultPackage.${system} ]; }
+            inputs.home-manager.nixosModules.home-manager
+            (
+              { ... }:
+              {
+                home-manager = {
+                  extraSpecialArgs = {
+                    inherit inputs;
+                    inherit systemSettings userSettings;
+                  };
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  sharedModules = [ inputs.nur.hmModules.nur ];
+
+                  users = {
+                    ${userSettings.username} = import ./user/${userSettings.username}/home.nix;
+                  };
+                };
+              }
+            )
+          ];
+        };
       };
     };
-  };
 }

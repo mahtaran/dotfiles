@@ -2,6 +2,8 @@
   config,
   pkgs,
   inputs,
+  systemSettings,
+  userSettings,
   ...
 }: {
   imports = [
@@ -41,6 +43,7 @@
         }
       ];
       files = [
+        { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; } }
         ".screenrc"
       ];
       allowOther = true;

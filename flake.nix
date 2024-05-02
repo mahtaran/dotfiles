@@ -114,9 +114,10 @@
                       };
                     };
                   })
-                  lib.mkIf (!builtins.pathExists systemSettings.secureBootKey) {
-                    boot.loader.systemd-boot.enable = true;
-                  }
+                  
+                  (lib.mkIf (!builtins.pathExists systemSettings.secureBootKey) {
+                    loader.systemd-boot.enable = true;
+                  })
                 ];
               }
             )

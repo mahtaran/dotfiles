@@ -8,7 +8,6 @@
   ...
 }: {
   imports = [
-    <sops-nix/modules/sops>
     ./hardware-configuration.nix
     ../../module/nixos/btrfs.nix
     ../../module/nixos/manage-script.nix
@@ -20,7 +19,7 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   sops = {
-    defaultSopsFile = "../../secret/machine/feanor/secrets.yaml";
+    defaultSopsFile = ../../secret/machine/feanor/secrets.yaml;
     age.keyFile = "../../../.config/sops/age/keys.txt";
     secrets = {
       password = {

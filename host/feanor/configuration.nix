@@ -186,7 +186,7 @@
 
       desktopManager = {
         gnome.enable = true;
-      }
+      };
 
       # Configure keymap
       xkb = {

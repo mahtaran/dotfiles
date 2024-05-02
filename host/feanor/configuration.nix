@@ -42,6 +42,7 @@
 
         configurationLimit = 5;
         settings = {
+          default = "@saved";
           auto-entries = true;
           auto-firmware = true;
           console-mode = "auto";

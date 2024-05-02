@@ -24,7 +24,10 @@
 
     # Only enable SOPS if the age key is available
     sops = {
-      age.keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+      # age = {
+      #   keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+      #   generateKey = true;
+      # };
       gnupg.home = "/home/mahtaran/.gnupg";
       secrets = {
         "mahtaran/password" = {
@@ -273,8 +276,15 @@
     # List services that you want to enable:
 
     # Enable the OpenSSH daemon.
-    # services.openssh.enable = true;
-
+    services.openssh = {
+      enable = true;
+      settings = {
+        ports = [ ];
+      };
+      hostKeys = [
+        { path = "/etc/ssh/ssh_host_ed25519_key"; type = "ed25519"; }
+      ];
+    };
     # Open ports in the firewall.
     # networking.firewall.allowedTCPPorts = [ ... ];
     # networking.firewall.allowedUDPPorts = [ ... ];

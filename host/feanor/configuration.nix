@@ -239,9 +239,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    (writeShellScriptBin "reenroll-tpm2" ''
-      sudo systemd-cryptenroll /dev/nvme1n1p1 --wipe-slot=tpm2 --tpm2-device=auto --tpm2-pcrs=0+2+7
-    '')
     sbctl
     git
     nixd

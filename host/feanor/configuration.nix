@@ -25,7 +25,7 @@
 
     # Only enable SOPS if the age key is available
     sops = lib.mkIf (builtins.pathExists sopsKeysPath) {
-      defaultSopsFile = ../../secret/machine/feanor/secrets.yaml;
+      defaultSopsFile = ../../secret/host/feanor/secrets.yaml;
       age.keyFile = "${sopsKeysPath}";
       secrets = {
         password = {

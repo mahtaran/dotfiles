@@ -109,7 +109,7 @@
             )
             inputs.impermanence.nixosModules.impermanence
             inputs.nur.nixosModules.nur
-            ./host/laptop/configuration.nix
+            ./host/feanor/configuration.nix
             { environment.systemPackages = [ inputs.alejandra.defaultPackage.${system} ]; }
             inputs.home-manager.nixosModules.home-manager
             (

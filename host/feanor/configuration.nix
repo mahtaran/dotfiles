@@ -57,7 +57,7 @@
   };
 
   fileSystems."/persist".neededForBoot = true;
-  environment.persistence."/persist/system" = {
+  environment.persistence."/persist" = {
     hideMounts = true;
     directories = [
       "/var/log"
@@ -71,9 +71,28 @@
     files = [
       "/etc/machine-id"
     ];
+    users.mahtaran = {
+      directories = [
+        "Documents"
+        "Downloads"
+        "Music"
+        "Pictures"
+        "Videos"
+        ".gnupg"
+        ".ssh"
+        ".nixops"
+        ".local/share/keyrings"
+        ".local/share/direnv"
+        ".local/share/Steam"
+      ];
+      files = [
+        { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
+        ".screenrc"
+      ];
+    }
   };
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "feanor";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary

@@ -25,30 +25,6 @@
     username = "mahtaran";
     homeDirectory = "/home/mahtaran";
 
-    persistence."/persist/home/mahtaran" = {
-      directories = [
-        "Documents"
-        "Downloads"
-        "Music"
-        "Pictures"
-        "Videos"
-        ".gnupg"
-        ".ssh"
-        ".nixops"
-        ".local/share/keyrings"
-        ".local/share/direnv"
-        {
-          directory = ".local/share/Steam";
-          method = "symlink";
-        }
-      ];
-      files = [
-        { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
-        ".screenrc"
-      ];
-      allowOther = true;
-    };
-
     # The home.packages option allows you to install Nix packages into your
     # environment.
     packages = [

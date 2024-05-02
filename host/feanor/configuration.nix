@@ -38,7 +38,7 @@
 
     # Only use Lanzaboote if the secure boot keys are present
     boot = lib.mkMerge [      
-      (lib.mkIf (builtins.pathExists secureBootKeyPath + /keys) {
+      (lib.mkIf (builtins.pathExists (secureBootKeyPath + /keys)) {
         loader.systemd-boot.enable = lib.mkForce false;
         lanzaboote = {
           enable = true;
@@ -55,7 +55,7 @@
         };
       })
       
-      (lib.mkIf (!builtins.pathExists secureBootKeyPath + /keys) {
+      (lib.mkIf (!builtins.pathExists (secureBootKeyPath + /keys)) {
         loader.systemd-boot.enable = true;
       })
 

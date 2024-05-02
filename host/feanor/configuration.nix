@@ -89,7 +89,7 @@
         { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
         ".screenrc"
       ];
-    }
+    };
   };
 
   networking.hostName = "feanor";

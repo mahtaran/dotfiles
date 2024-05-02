@@ -24,7 +24,7 @@
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
     # Only enable SOPS if the age key is available
-    sops = lib.mkIf builtins.pathExists sopsKeysPath {
+    sops = lib.mkIf (builtins.pathExists sopsKeysPath) {
       defaultSopsFile = ../../secret/machine/feanor/secrets.yaml;
       age.keyFile = "${sopsKeysPath}";
       secrets = {

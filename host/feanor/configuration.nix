@@ -34,7 +34,7 @@
   };
 
   boot = lib.mkMerge [      
-    (lib.mkIf systemSettings.secureBoot {
+    (lib.mkIf (systemSettings.secureBoot) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
@@ -51,7 +51,7 @@
       };
     })
     
-    (lib.mkIf !systemSettings.secureBoot {
+    (lib.mkIf (!systemSettings.secureBoot) {
       loader.systemd-boot.enable = true;
     })
 

@@ -180,10 +180,13 @@
 
       displayManager = {
         gdm.enable = true;
-        gnome.enable = true;
 
         defaultSession = "gnome";
       };
+
+      desktopManager = {
+        gnome.enable = true;
+      }
 
       # Configure keymap
       xkb = {

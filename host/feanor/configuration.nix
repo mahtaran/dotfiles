@@ -121,17 +121,13 @@
           "Music"
           "Pictures"
           "Videos"
-          ".gnupg"
-          ".local/share/keyrings"
-          ".local/share/direnv"
-          ".local/share/Steam"
-          ".nixops"
-          ".ssh"
+          { directory = ".gnupg"; mode = "u=rwx,g=,o="; }
+          { directory = ".local/share/keyrings"; mode = "u=rwx,g=,o="; }
+          { directory = ".ssh"; mode = "u=rwx,g=,o="; }
           "dotfiles"
         ];
         files = [
           { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
-          ".screenrc"
         ];
       };
     };

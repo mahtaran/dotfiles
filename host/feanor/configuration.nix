@@ -79,11 +79,12 @@
         "Pictures"
         "Videos"
         ".gnupg"
-        ".ssh"
-        ".nixops"
         ".local/share/keyrings"
         ".local/share/direnv"
         ".local/share/Steam"
+        ".nixops"
+        ".ssh"
+        "dotfiles"
       ];
       files = [
         { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }

@@ -8,7 +8,7 @@
   ...
 }:
   let
-    secureBootKeyPath = /etc/secureboot;
+    secureBootPath = /persist/etc/secureboot;
   in {
     imports = [
       ./hardware-configuration.nix
@@ -38,11 +38,11 @@
 
     # Only use Lanzaboote if the secure boot keys are present
     boot = lib.mkMerge [      
-      (lib.mkIf (builtins.pathExists (secureBootKeyPath + /keys)) {
+      (lib.mkIf (builtins.pathExists (secureBootPath + /keys)) {
         loader.systemd-boot.enable = lib.mkForce false;
         lanzaboote = {
           enable = true;
-          pkiBundle = "${secureBootKeyPath}";
+          pkiBundle = "${secureBootPath}";
 
           configurationLimit = 5;
           settings = {
@@ -55,7 +55,7 @@
         };
       })
       
-      (lib.mkIf (!builtins.pathExists (secureBootKeyPath + /keys)) {
+      (lib.mkIf (!builtins.pathExists (secureBootPath + /keys)) {
         loader.systemd-boot.enable = true;
       })
 

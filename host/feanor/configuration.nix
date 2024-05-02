@@ -225,7 +225,10 @@
   #   enableSSHSupport = true;
   # };
   programs.java.enable = true;
-  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-gnome3;
+  };
 
   # List services that you want to enable:
 

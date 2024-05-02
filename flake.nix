@@ -48,7 +48,6 @@
   outputs =
     inputs@{ ... }:
     let
-      lib = inputs.nixpkgs.lib;
       systemSettings = {
         architecture = "x86_64-linux";
         timezone = "Europe/Amsterdam";
@@ -64,8 +63,6 @@
           LC_TELEPHONE = "nl_NL.UTF-8";
           LC_TIME = "nl_NL.UTF-8";
         };
-        # TODO make path more specific
-        secureBootKey = /etc/secureboot;
       };
       userSettings = {
         username = "mahtaran";
@@ -78,7 +75,7 @@
       formatter.${systemSettings.architecture} = inputs.alejandra.defaultPackage.${systemSettings.architecture};
 
       nixosConfigurations = {
-        feanor = lib.nixosSystem rec {
+        feanor = inputs.nixpkgs.lib.nixosSystem rec {
           system = systemSettings.architecture;
           specialArgs = {
             inherit inputs;
@@ -89,38 +86,6 @@
             inputs.disko.nixosModules.disko
             ./module/disko.nix
             inputs.lanzaboote.nixosModules.lanzaboote
-            (
-              { pkgs, lib, ... }:
-              {
-                environment.systemPackages = [ pkgs.sbctl ];
-                boot = lib.mkMerge [
-                  {
-                    initrd.systemd.enable = true;
-                  }
-                  
-                  (lib.mkIf (builtins.pathExists systemSettings.secureBootKey) {
-                    loader.systemd-boot.enable = lib.mkForce false;
-                    lanzaboote = {
-                      enable = true;
-                      pkiBundle = "/etc/secureboot";
-
-                      configurationLimit = 5;
-                      settings = {
-                        auto-entries = true;
-                        auto-firmware = true;
-                        console-mode = "auto";
-                        editor = false;
-                        timeout = 10;
-                      };
-                    };
-                  })
-                  
-                  (lib.mkIf (!builtins.pathExists systemSettings.secureBootKey) {
-                    loader.systemd-boot.enable = true;
-                  })
-                ];
-              }
-            )
             inputs.impermanence.nixosModules.impermanence
             inputs.nur.nixosModules.nur
             ./host/feanor/configuration.nix

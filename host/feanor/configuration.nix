@@ -28,7 +28,7 @@
       gnupg.home = "/home/mahtaran/.gnupg";
       secrets = {
         "mahtaran/password" = {
-          sopsFile = "./secret/user/mahtaran/secrets.yaml"
+          sopsFile = "./secret/user/mahtaran/secrets.yaml";
           key = "password";
           neededForUsers = true;
         };

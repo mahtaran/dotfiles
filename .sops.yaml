@@ -2,11 +2,11 @@ keys:
   - &user_mahtaran C7FFB72E0527423AD470E132AA82C4EBCB1682E0
   - &machine_feanor age1yawte8ds4r2egs857364g9nqf3lptye7gjhlrl4sfzczv9fghgmq6hyaqj
 creation_rules:
-  - path_regex: secrets/user/mahtaran/.+\.yaml$
+  - path_regex: secret/user/mahtaran/.+\.yaml$
     key_groups:
     - pgp:
       - *user_mahtaran
-  - path_regex: secrets/machine/feanor/.+\.yaml$
+  - path_regex: secret/machine/feanor/.+\.yaml$
     key_groups:
     - age:
       - *machine_feanor

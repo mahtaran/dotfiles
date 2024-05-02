@@ -8,6 +8,7 @@
   ...
 }: {
   imports = [
+    <sops-nix/modules/sops>
     ./hardware-configuration.nix
     ../../module/nixos/btrfs.nix
     ../../module/nixos/manage-script.nix
@@ -17,6 +18,16 @@
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
+
+  sops = {
+    defaultSopsFile = "../../secret/machine/feanor/secrets.yaml";
+    age.keyFile = "../../../.config/sops/age/keys.txt";
+    secrets = {
+      password = {
+        neededForUsers = true;
+      };
+    }
+  }
 
   boot.initrd.systemd.services.rollback = {
     description = "Rollback BTRFS root subvolume to a pristine state";
@@ -182,10 +193,10 @@
   # Define a user account.
   users.mutableUsers = false;
   users.users.mahtaran = {
-    hashedPassword = "";
     isNormalUser = true;
     description = "Luka Leer";
     extraGroups = ["networkmanager" "video" "wheel"];
+    hashedPasswordFile = config.sops.secrets.password.path;
     packages = with pkgs; [
       # firefox
       # kate

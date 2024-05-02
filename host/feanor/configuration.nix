@@ -8,7 +8,6 @@
   ...
 }:
   let
-    sopsKeysPath = ../../../.config/sops/age/keys.txt;
     # TODO make path more specific
     secureBootKeyPath = /etc/secureboot;
   in {
@@ -24,11 +23,13 @@
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
     # Only enable SOPS if the age key is available
-    sops = lib.mkIf (builtins.pathExists sopsKeysPath) {
-      defaultSopsFile = ../../secret/host/feanor/secrets.yaml;
-      age.keyFile = "${sopsKeysPath}";
+    sops = {
+      age.keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+      gnupg.home = "/home/mahtaran/.gnupg"
       secrets = {
-        password = {
+        "mahtaran/password" = {
+          sopsFile = "./secret/user/mahtaran/secrets.yaml"
+          key = "password";
           neededForUsers = true;
         };
       };
@@ -219,27 +220,17 @@
 
     # Define a user account.
     users.mutableUsers = false;
-    users.users.mahtaran = lib.mkMerge [
-      {
-        isNormalUser = true;
-        description = "Luka Leer";
-        extraGroups = ["networkmanager" "video" "wheel"];        
-        packages = with pkgs; [
-          # firefox
-          # kate
-          # thunderbird
-        ];
-      }
-
-      # Set the password hash if SOPS is available
-      (lib.mkIf (builtins.pathExists sopsKeysPath) {
-        hashedPasswordFile = config.sops.secrets.password.path;
-      })
-      # Otherwise, set the default password "password"
-      (lib.mkIf (!builtins.pathExists sopsKeysPath) {
-        password = "password";
-      })
-    ];
+    users.users.mahtaran = {
+      isNormalUser = true;
+      description = "Luka Leer";
+      hashedPasswordFile = config.sops.secrets."mahtaran/password".path;
+      extraGroups = ["networkmanager" "video" "wheel"];        
+      packages = with pkgs; [
+        # firefox
+        # kate
+        # thunderbird
+      ];
+    }
 
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;

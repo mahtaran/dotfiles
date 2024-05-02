@@ -8,7 +8,7 @@
   ...
 }:
   let
-    secureBootKeyPath = /etc/secureboot/;
+    secureBootKeyPath = /etc/secureboot;
   in {
     imports = [
       ./hardware-configuration.nix

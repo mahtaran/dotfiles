@@ -8,8 +8,7 @@
   ...
 }:
   let
-    # TODO make path more specific
-    secureBootKeyPath = /etc/secureboot;
+    secureBootKeyPath = /etc/secureboot/;
   in {
     imports = [
       ./hardware-configuration.nix
@@ -22,7 +21,6 @@
 
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
-    # Only enable SOPS if the age key is available
     sops = {
       age = {
         keyFile = "/persist/home/mahtaran/.config/sops/age/keys.txt";
@@ -38,8 +36,9 @@
       };
     };
 
+    # Only use Lanzaboote if the secure boot keys are present
     boot = lib.mkMerge [      
-      (lib.mkIf (builtins.pathExists secureBootKeyPath) {
+      (lib.mkIf (builtins.pathExists secureBootKeyPath + /keys) {
         loader.systemd-boot.enable = lib.mkForce false;
         lanzaboote = {
           enable = true;
@@ -56,7 +55,7 @@
         };
       })
       
-      (lib.mkIf (!builtins.pathExists secureBootKeyPath) {
+      (lib.mkIf (!builtins.pathExists secureBootKeyPath + /keys) {
         loader.systemd-boot.enable = true;
       })
 
@@ -283,7 +282,7 @@
       enable = true;
       ports = [ ];
       hostKeys = [
-        { path = "/etc/ssh/ssh_host_ed25519_key"; type = "ed25519"; }
+        { path = "/persist/etc/ssh/ssh_host_ed25519_key"; type = "ed25519"; }
       ];
     };
     # Open ports in the firewall.

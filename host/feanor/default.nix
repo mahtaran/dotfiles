@@ -112,15 +112,10 @@ in {
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
-      "/etc/secureboot"
+      { directory = "/etc/secureboot"; mode = "u=rwx,g=,o="; }
     ];
     files = [
       "/etc/machine-id"
-      {
-        file = "/etc/ssh/ssh_host_ed25519_key";
-        parentDirectory = {mode = "u=rwx,g=,o=";};
-      }
-      "/etc/ssh/ssh_host_ed25519_key.pub"
     ];
     users.mahtaran = {
       directories = [
@@ -134,6 +129,10 @@ in {
           mode = "u=rwx,g=,o=";
         }
         {
+          directory = ".ssh";
+          mode = "u=rwx,g=,o=";
+        }
+        {
           directory = ".local/share/keyrings";
           mode = "u=rwx,g=,o=";
         }
@@ -144,11 +143,6 @@ in {
           file = ".config/sops/age/keys.txt";
           parentDirectory = {mode = "u=rwx,g=,o=";};
         }
-        {
-          file = ".ssh/id_ed25519";
-          parentDirectory = {mode = "u=rwx,g=,o=";};
-        }
-        ".ssh/id_ed25519.pub"
       ];
     };
   };

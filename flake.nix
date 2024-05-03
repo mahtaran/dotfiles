@@ -75,18 +75,12 @@
   in rec {
     formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.alejandra;
 
-    diskoConfigurations = {
-      feanor = import ./module/disko/single-disk.nix {
-        disk = "/dev/disk/by-id/nvme-Samsung_SSD_960_PRO_512GB_S3EWNWAJ335872H";
-      };
-    };
-
     nixosConfigurations = {
       feanor = mkSystem {
         entry = ./host/feanor;
         arch = "x86_64-linux";
         extraModules = [
-          diskoConfigurations.feanor
+          ./module/disko/single-disk.nix
           inputs.lanzaboote.nixosModules.lanzaboote
           inputs.impermanence.nixosModules.impermanence
         ];

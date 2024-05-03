@@ -17,9 +17,8 @@
 
   sops = {
     age = {
-      keyFile = "/persist/home/mahtaran/.config/sops/age/keys.txt";
-      generateKey = true;
-      sshKeyPaths = ["/persist/etc/ssh/ssh_host_ed25519_key"];
+      keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+      sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     };
     secrets = {
       "mahtaran/password" = {
@@ -31,11 +30,11 @@
   };
 
   boot = lib.mkMerge [
-    (lib.mkIf (builtins.pathExists /persist/etc/secureboot/keys) {
+    (lib.mkIf (builtins.pathExists /etc/secureboot/keys) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
-        pkiBundle = "/persist/etc/secureboot";
+        pkiBundle = "/etc/secureboot";
 
         configurationLimit = 5;
         settings = {
@@ -48,7 +47,7 @@
       };
     })
 
-    (lib.mkIf (!builtins.pathExists /persist/etc/secureboot/keys) {
+    (lib.mkIf (!builtins.pathExists /etc/secureboot/keys) {
       loader.systemd-boot.enable = true;
     })
 
@@ -292,7 +291,7 @@
     ports = [];
     hostKeys = [
       {
-        path = "/persist/etc/ssh/ssh_host_ed25519_key";
+        path = "/etc/ssh/ssh_host_ed25519_key";
         type = "ed25519";
       }
     ];

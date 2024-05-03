@@ -6,8 +6,8 @@
   ...
 }: {
   imports = [
-    ./hardware-configuration.nix
-    ../../module/disko.nix
+    ./hardware.nix
+    
     ../../module/nixos/btrfs.nix
     ../../module/nixos/manage-script.nix
     ../../module/nixos/optimise.nix

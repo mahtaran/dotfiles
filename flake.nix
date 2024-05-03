@@ -40,30 +40,25 @@
     };
   };
 
-  outputs = inputs @ {...}: {
-    formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.alejandra;
+  outputs = inputs @ {...}:
+    let
+      mkSystem = { entry, arch, extraModules, users ... }:
+        inputs.nixpkgs.lib.nixosSystem {
+          system = arch;
+          specialArgs = {
+            inherit inputs;
+          };
 
-    nixosConfigurations = {
-      feanor = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs;
-        };
-        modules = [
-          {
-            nix.settings.experimental-features = ["nix-command" "flakes"];
-          }
-          inputs.disko.nixosModules.disko
-          inputs.lanzaboote.nixosModules.lanzaboote
-          inputs.sops-nix.nixosModules.sops
-          inputs.impermanence.nixosModules.impermanence
-          inputs.nur.nixosModules.nur
-
-          ./host/feanor/configuration.nix
-
-          inputs.home-manager.nixosModules.home-manager
-          (
-            {...}: {
+          modules = [
+            {
+              nix.settings.experimental-features = ["nix-command" "flakes"];
+            }
+            inputs.disko.nixosModules.disko
+            inputs.sops-nix.nixosModules.sops
+            inputs.nur.nixosModules.nur
+            inputs.home-manager.nixosModules.home-manager
+            entry
+            {
               home-manager = {
                 extraSpecialArgs = {
                   inherit inputs;
@@ -72,13 +67,32 @@
                 useUserPackages = true;
                 sharedModules = [inputs.nur.hmModules.nur];
 
-                users = {
-                  mahtaran = import ./user/mahtaran/home.nix;
-                };
+                users = users;
               };
             }
-          )
+          ] ++ extraModules;
+        };
+  in rec {
+    formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.alejandra;
+
+    diskoConfigurations = {
+      feanor = import ./module/disko/single-disk.nix {
+        disk = "/dev/disk/by-id/nvme-Samsung_SSD_960_PRO_512GB_S3EWNWAJ335872H";
+      }
+    };
+
+    nixosConfigurations = {
+      feanor = mkSystem {
+        entry = ./host/feanor;
+        arch = "x86_64-linux";
+        extraModules = [
+          diskoConfigurations.feanor
+          inputs.lanzaboote.nixosModules.lanzaboote
+          inputs.impermanence.nixosModules.impermanence
         ];
+        users = {
+          mahtaran = import ./user/mahtaran;
+        };
       };
     };
   };

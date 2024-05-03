@@ -1,8 +1,9 @@
+{ disk, ... }:
 {
   disko.devices = {
     disk = {
       primary = {
-        device = "/dev/disk/by-id/replaced-by-disko-install";
+        device = disk;
         type = "disk";
         content = {
           type = "gpt";

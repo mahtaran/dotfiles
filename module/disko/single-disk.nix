@@ -2,7 +2,7 @@
   disko.devices = {
     disk = {
       primary = {
-        device = "/dev/disk/by-id/replaced-by-disko-install"
+        device = "/dev/disk/by-id/replaced-by-disko-install";
         type = "disk";
         content = {
           type = "gpt";

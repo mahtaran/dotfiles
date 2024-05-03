@@ -18,7 +18,7 @@ in {
     ../../module/hyprland.nix
   ];
 
-  sops = lib.mkIf !onInstallMedia {
+  sops = lib.mkIf (!onInstallMedia) {
     age = {
       keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
       sshKeyPaths = [
@@ -35,11 +35,11 @@ in {
   };
 
   boot = lib.mkMerge [
-    (lib.mkIf onInstallMedia {
+    (lib.mkIf (onInstallMedia) {
       loader.systemd-boot.enable = true;
     })
 
-    (lib.mkIf !onInstallMedia {
+    (lib.mkIf (!onInstallMedia) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
@@ -241,11 +241,11 @@ in {
   # Define a user account.
   users.mutableUsers = false;
   users.users.mahtaran = lib.mkMerge [
-    (lib.mkIf onInstallMedia {
+    (lib.mkIf (onInstallMedia) {
       password = "password";
     })
 
-    (lib.mkIf !onInstallMedia {
+    (lib.mkIf (!onInstallMedia) {
       hashedPassword = config.sops.secrets."mahtaran/password".password;
     })
 

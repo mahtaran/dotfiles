@@ -4,10 +4,6 @@
   inputs,
   ...
 }: {
-  imports = [
-    inputs.impermanence.nixosModules.home-manager.impermanence
-  ];
-
   home = {
     # This value determines the Home Manager release that your configuration is
     # compatible with. This helps avoid breakage when a new Home Manager release
@@ -107,7 +103,7 @@
   
     vscode = {
       enable = true;
-      package = inputs.code-insiders.packages."x86_64-linux".vscode-insider;
+      package = inputs.code-insiders.packages.x86_64-linux.vscode-insider;
     };
   };
 }

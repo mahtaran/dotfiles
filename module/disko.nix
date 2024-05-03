@@ -48,13 +48,13 @@
                   mountpoint = "/";
                 };
 
+                "@persist" = {
+                  mountpoint = "/persist";
+                };
+
                 "@nix" = {
                   mountpoint = "/nix";
                   mountOptions = [ "compress=zstd" "noatime" ];
-                };
-
-                "@persist" = {
-                  mountpoint = "/persist";
                 };
 
                 "@backup" = {

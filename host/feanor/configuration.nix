@@ -18,7 +18,10 @@
   sops = {
     age = {
       keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
-      sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+      # On install, the SSH key is not yet available
+      sshKeyPaths = lib.mkIf (builtins.pathExists /etc/ssh/ssh_host_ed25519_key) [
+        "/etc/ssh/ssh_host_ed25519_key"
+      ];
     };
     secrets = {
       "mahtaran/password" = {

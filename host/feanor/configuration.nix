@@ -3,7 +3,6 @@
   lib,
   pkgs,
   inputs,
-  settings,
   ...
 }: {
   imports = [
@@ -32,7 +31,7 @@
   };
 
   boot = lib.mkMerge [      
-    (lib.mkIf (settings.system.secureBoot) {
+    (lib.mkIf (builtins.pathExists /persist/etc/secureboot/keys) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
@@ -49,7 +48,7 @@
       };
     })
     
-    (lib.mkIf (!settings.system.secureBoot) {
+    (lib.mkIf (!builtins.pathExists /persist/etc/secureboot/keys) {
       loader.systemd-boot.enable = true;
     })
 

@@ -45,19 +45,14 @@
     };
   };
 
-  outputs = inputs@{ ... }:
-  let
-    settings = import ./settings.nix;
-    alejandra = inputs.alejandra.defaultPackage.${settings.system.architecture};
-  in {
-    formatter.${settings.system.architecture} = alejandra;
+  outputs = inputs@{ ... }: {
+    formatter."x86_64-linux" = inputs.alejandra.defaultPackage."x86_64-linux";
 
-    nixosConfigurations = {
-      ${settings.system.name} = inputs.nixpkgs.lib.nixosSystem {
-        system = settings.system.architecture;
+    nixosConfigurations = rec {
+      feanor = inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
-          inherit settings;
         };
         modules = [
           { nix.settings.experimental-features = ["nix-command" "flakes"]; }
@@ -67,8 +62,12 @@
           inputs.impermanence.nixosModules.impermanence
           inputs.nur.nixosModules.nur
 
-          ./host/${settings.system.name}/configuration.nix
-          { environment.systemPackages = [ alejandra ]; }
+          ./host/feanor/configuration.nix
+          {
+            environment.systemPackages = [
+              inputs.alejandra.defaultPackage.${system}
+            ];
+          }
           
           inputs.home-manager.nixosModules.home-manager
           (
@@ -77,14 +76,13 @@
               home-manager = {
                 extraSpecialArgs = {
                   inherit inputs;
-                  inherit settings;
                 };
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 sharedModules = [ inputs.nur.hmModules.nur ];
 
                 users = {
-                  ${settings.user.name} = import ./user/${settings.user.name}/home.nix;
+                  mahtaran = import ./user/mahtaran/home.nix;
                 };
               };
             }

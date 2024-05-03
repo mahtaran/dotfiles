@@ -6,7 +6,7 @@
   ...
 }: 
 let
-  installing = builtins.pathExists /home/nixos;
+  onInstallMedia = builtins.pathExists /home/nixos;
 in {
   imports = [
     ./hardware.nix
@@ -18,11 +18,8 @@ in {
     ../../module/hyprland.nix
   ];
 
-  sops = {
-    age = if installing then {
-      keyFile = "/home/nixos/keys.txt";
-      sshKeyPaths = [];
-    } else {
+  sops = lib.mkIf !onInstallMedia {
+    age = {
       keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
       sshKeyPaths = [
         "/etc/ssh/ssh_host_ed25519_key"
@@ -38,7 +35,11 @@ in {
   };
 
   boot = lib.mkMerge [
-    (lib.mkIf (builtins.pathExists /etc/secureboot/keys) {
+    (lib.mkIf onInstallMedia {
+      loader.systemd-boot.enable = true;
+    })
+
+    (lib.mkIf !onInstallMedia {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
@@ -53,10 +54,6 @@ in {
           timeout = 10;
         };
       };
-    })
-
-    (lib.mkIf (!builtins.pathExists /etc/secureboot/keys) {
-      loader.systemd-boot.enable = true;
     })
 
     {
@@ -243,17 +240,26 @@ in {
 
   # Define a user account.
   users.mutableUsers = false;
-  users.users.mahtaran = {
-    isNormalUser = true;
-    description = "Luka Leer";
-    hashedPasswordFile = config.sops.secrets."mahtaran/password".path;
-    extraGroups = ["networkmanager" "video" "wheel"];
-    packages = with pkgs; [
-      # firefox
-      # kate
-      # thunderbird
-    ];
-  };
+  users.users.mahtaran = lib.mkMerge [
+    (lib.mkIf onInstallMedia {
+      password = "password";
+    })
+
+    (lib.mkIf !onInstallMedia {
+      hashedPassword = config.sops.secrets."mahtaran/password".password;
+    })
+
+    {
+      isNormalUser = true;
+      description = "Luka Leer";
+      extraGroups = ["networkmanager" "video" "wheel"];
+      packages = with pkgs; [
+        # firefox
+        # kate
+        # thunderbird
+      ];
+    }
+  ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

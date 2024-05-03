@@ -4,10 +4,13 @@
   pkgs,
   inputs,
   ...
-}: {
+}: 
+let
+  installing = builtins.pathExists /home/nixos;
+in {
   imports = [
     ./hardware.nix
-    
+
     ../../module/nixos/btrfs.nix
     ../../module/nixos/manage-script.nix
     ../../module/nixos/optimise.nix
@@ -16,10 +19,12 @@
   ];
 
   sops = {
-    age = {
+    age = if installing then {
+      keyFile = "/home/nixos/keys.txt";
+      sshKeyPaths = [];
+    } else {
       keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
-      # On install, the SSH key is not yet available
-      sshKeyPaths = lib.mkIf (builtins.pathExists /etc/ssh/ssh_host_ed25519_key) [
+      sshKeyPaths = [
         "/etc/ssh/ssh_host_ed25519_key"
       ];
     };

@@ -30,7 +30,7 @@
     };
   };
 
-  boot = lib.mkMerge [      
+  boot = lib.mkMerge [
     (lib.mkIf (builtins.pathExists /persist/etc/secureboot/keys) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
@@ -47,7 +47,7 @@
         };
       };
     })
-    
+
     (lib.mkIf (!builtins.pathExists /persist/etc/secureboot/keys) {
       loader.systemd-boot.enable = true;
     })
@@ -60,7 +60,7 @@
 
           rollback = {
             description = "Rollback BTRFS root subvolume to a pristine state";
-            wantedBy = [ "initrd.target" ];
+            wantedBy = ["initrd.target"];
             after = [
               "systemd-cryptsetup@enc.service"
               "dev-root_vg-root.device"
@@ -87,7 +87,7 @@
                 done &&
                 echo "deleting /@/root" &&
                 btrfs subvolume delete /mnt/@/root
-              
+
               echo "creating blank /@/root"
               btrfs subvolume create /mnt/@/root
               umount /mnt/@
@@ -112,7 +112,10 @@
     ];
     files = [
       "/etc/machine-id"
-      { file = "/etc/ssh/ssh_host_ed25519_key"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
+      {
+        file = "/etc/ssh/ssh_host_ed25519_key";
+        parentDirectory = {mode = "u=rwx,g=,o=";};
+      }
       "/etc/ssh/ssh_host_ed25519_key.pub"
     ];
     users.mahtaran = {
@@ -122,13 +125,25 @@
         "Music"
         "Pictures"
         "Videos"
-        { directory = ".gnupg"; mode = "u=rwx,g=,o="; }
-        { directory = ".local/share/keyrings"; mode = "u=rwx,g=,o="; }
+        {
+          directory = ".gnupg";
+          mode = "u=rwx,g=,o=";
+        }
+        {
+          directory = ".local/share/keyrings";
+          mode = "u=rwx,g=,o=";
+        }
         "dotfiles"
       ];
       files = [
-        { file = ".config/sops/age/keys.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
-        { file = ".ssh/id_ed25519"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
+        {
+          file = ".config/sops/age/keys.txt";
+          parentDirectory = {mode = "u=rwx,g=,o=";};
+        }
+        {
+          file = ".ssh/id_ed25519";
+          parentDirectory = {mode = "u=rwx,g=,o=";};
+        }
         ".ssh/id_ed25519.pub"
       ];
     };
@@ -225,7 +240,7 @@
     isNormalUser = true;
     description = "Luka Leer";
     hashedPasswordFile = config.sops.secrets."mahtaran/password".path;
-    extraGroups = ["networkmanager" "video" "wheel"];        
+    extraGroups = ["networkmanager" "video" "wheel"];
     packages = with pkgs; [
       # firefox
       # kate
@@ -241,6 +256,7 @@
   environment.systemPackages = with pkgs; [
     sbctl
     git
+    alejandra
     nixd
     wluma
   ];
@@ -273,9 +289,12 @@
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
-    ports = [ ];
+    ports = [];
     hostKeys = [
-      { path = "/persist/etc/ssh/ssh_host_ed25519_key"; type = "ed25519"; }
+      {
+        path = "/persist/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
     ];
   };
   # Open ports in the firewall.

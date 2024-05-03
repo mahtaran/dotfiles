@@ -34,28 +34,25 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    alejandra = {
-      url = "github:kamadorueda/alejandra";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     code-insiders = {
       url = "github:iosmanthus/code-insider-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ ... }: {
-    formatter."x86_64-linux" = inputs.alejandra.defaultPackage."x86_64-linux";
+  outputs = inputs @ {...}: {
+    formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.alejandra;
 
-    nixosConfigurations = rec {
+    nixosConfigurations = {
       feanor = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
         };
         modules = [
-          { nix.settings.experimental-features = ["nix-command" "flakes"]; }
+          {
+            nix.settings.experimental-features = ["nix-command" "flakes"];
+          }
           inputs.disko.nixosModules.disko
           inputs.lanzaboote.nixosModules.lanzaboote
           inputs.sops-nix.nixosModules.sops
@@ -63,23 +60,17 @@
           inputs.nur.nixosModules.nur
 
           ./host/feanor/configuration.nix
-          {
-            environment.systemPackages = [
-              inputs.alejandra.defaultPackage.${system}
-            ];
-          }
-          
+
           inputs.home-manager.nixosModules.home-manager
           (
-            { ... }:
-            {
+            {...}: {
               home-manager = {
                 extraSpecialArgs = {
                   inherit inputs;
                 };
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                sharedModules = [ inputs.nur.hmModules.nur ];
+                sharedModules = [inputs.nur.hmModules.nur];
 
                 users = {
                   mahtaran = import ./user/mahtaran/home.nix;

@@ -78,7 +78,7 @@
     diskoConfigurations = {
       feanor = import ./module/disko/single-disk.nix {
         disk = "/dev/disk/by-id/nvme-Samsung_SSD_960_PRO_512GB_S3EWNWAJ335872H";
-      }
+      };
     };
 
     nixosConfigurations = {

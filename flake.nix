@@ -42,7 +42,7 @@
 
   outputs = inputs @ {...}:
     let
-      mkSystem = { entry, arch, extraModules, users ... }:
+      mkSystem = { entry, arch, extraModules, users, ... }:
         inputs.nixpkgs.lib.nixosSystem {
           system = arch;
           specialArgs = {

@@ -2,8 +2,7 @@
   config,
   pkgs,
   inputs,
-  systemSettings,
-  userSettings,
+  settings,
   ...
 }: {
   imports = [

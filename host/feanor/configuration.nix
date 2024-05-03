@@ -3,20 +3,18 @@
   lib,
   pkgs,
   inputs,
-  systemSettings,
-  userSettings,
+  settings,
   ...
 }: {
   imports = [
     ./hardware-configuration.nix
+    ../../module/disko.nix
     ../../module/nixos/btrfs.nix
     ../../module/nixos/manage-script.nix
     ../../module/nixos/optimise.nix
     ../../module/fingerprint.nix
     ../../module/hyprland.nix
   ];
-
-  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   sops = {
     age = {
@@ -34,7 +32,7 @@
   };
 
   boot = lib.mkMerge [      
-    (lib.mkIf (systemSettings.secureBoot) {
+    (lib.mkIf (settings.system.secureBoot) {
       loader.systemd-boot.enable = lib.mkForce false;
       lanzaboote = {
         enable = true;
@@ -51,7 +49,7 @@
       };
     })
     
-    (lib.mkIf (!systemSettings.secureBoot) {
+    (lib.mkIf (!settings.system.secureBoot) {
       loader.systemd-boot.enable = true;
     })
 

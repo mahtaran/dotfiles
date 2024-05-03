@@ -45,73 +45,52 @@
     };
   };
 
-  outputs =
-    inputs@{ ... }:
-    let
-      systemSettings = {
-        architecture = "x86_64-linux";
-        secureBoot = false;
-        timezone = "Europe/Amsterdam";
-        defaultLocale = "en_GB.UTF-8";
-        extraLocaleSettings = {
-          LC_ADDRESS = "nl_NL.UTF-8";
-          LC_IDENTIFICATION = "nl_NL.UTF-8";
-          LC_MEASUREMENT = "nl_NL.UTF-8";
-          LC_MONETARY = "nl_NL.UTF-8";
-          LC_NAME = "nl_NL.UTF-8";
-          LC_NUMERIC = "nl_NL.UTF-8";
-          LC_PAPER = "nl_NL.UTF-8";
-          LC_TELEPHONE = "nl_NL.UTF-8";
-          LC_TIME = "nl_NL.UTF-8";
+  outputs = inputs@{ ... }:
+  let
+    settings = import ./settings.nix;
+    alejandra = inputs.alejandra.defaultPackage.${settings.system.architecture};
+  in {
+    formatter.${settings.system.architecture} = alejandra;
+
+    nixosConfigurations = {
+      ${settings.system.name} = inputs.nixpkgs.lib.nixosSystem {
+        system = settings.system.architecture;
+        specialArgs = {
+          inherit inputs;
+          inherit settings;
         };
-      };
-      userSettings = {
-        username = "mahtaran";
-        name = "Luka";
-        email = "luka.leer@gmail.com";
-        editor = "nano";
-      };
-    in
-    {
-      formatter.${systemSettings.architecture} = inputs.alejandra.defaultPackage.${systemSettings.architecture};
+        modules = [
+          { nix.settings.experimental-features = ["nix-command" "flakes"]; }
+          inputs.disko.nixosModules.disko
+          inputs.lanzaboote.nixosModules.lanzaboote
+          inputs.sops-nix.nixosModules.sops
+          inputs.impermanence.nixosModules.impermanence
+          inputs.nur.nixosModules.nur
 
-      nixosConfigurations = {
-        feanor = inputs.nixpkgs.lib.nixosSystem rec {
-          system = systemSettings.architecture;
-          specialArgs = {
-            inherit inputs;
-            inherit systemSettings userSettings;
-          };
-          modules = [
-            inputs.disko.nixosModules.disko
-            ./module/disko.nix
-            inputs.lanzaboote.nixosModules.lanzaboote
-            inputs.sops-nix.nixosModules.sops
-            inputs.impermanence.nixosModules.impermanence
-            inputs.nur.nixosModules.nur
-            ./host/feanor/configuration.nix
-            { environment.systemPackages = [ inputs.alejandra.defaultPackage.${system} ]; }
-            inputs.home-manager.nixosModules.home-manager
-            (
-              { ... }:
-              {
-                home-manager = {
-                  extraSpecialArgs = {
-                    inherit inputs;
-                    inherit systemSettings userSettings;
-                  };
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  sharedModules = [ inputs.nur.hmModules.nur ];
-
-                  users = {
-                    ${userSettings.username} = import ./user/${userSettings.username}/home.nix;
-                  };
+          ./host/${settings.system.name}/configuration.nix
+          { environment.systemPackages = [ alejandra ]; }
+          
+          inputs.home-manager.nixosModules.home-manager
+          (
+            { ... }:
+            {
+              home-manager = {
+                extraSpecialArgs = {
+                  inherit inputs;
+                  inherit settings;
                 };
-              }
-            )
-          ];
-        };
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                sharedModules = [ inputs.nur.hmModules.nur ];
+
+                users = {
+                  ${settings.user.name} = import ./user/${settings.user.name}/home.nix;
+                };
+              };
+            }
+          )
+        ];
       };
     };
+  };
 }

@@ -1,0 +1,4 @@
+# Based on https://github.com/github/gitignore
+
+# Secrets
+settings.nix

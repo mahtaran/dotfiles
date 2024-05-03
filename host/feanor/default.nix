@@ -113,6 +113,7 @@ in {
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
       { directory = "/etc/secureboot"; mode = "u=rwx,g=,o="; }
+      { directory = "/etc/ssh"; mode = "u=rwx,g=,o="; }
     ];
     files = [
       "/etc/machine-id"

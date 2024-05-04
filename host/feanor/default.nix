@@ -94,22 +94,25 @@ in {
               echo "snapshotting /mnt/@ to /mnt/@backup/$timestamp"
               btrfs subvolume snapshot -r /mnt/@ /mnt/@backup/$timestamp
 
-              echo "deleting @"
-              delete_subvolume_recursively /mnt/@
-
-              echo "creating blank /mnt/@"
-              btrfs subvolume create /mnt/@
-
               echo "deleting old backups"
-              # All backups older than 30 days
               for backup in $(ls -1 /mnt/@backup); do
                 if [ $(date --date="$backup" +"%s") -lt $(date --date="30 days ago" +"%s") ]; then
                   echo "deleting /mnt/@backup/$backup"
                   delete_subvolume_recursively /mnt/@backup/$backup
                 fi
               done
+              umount /mnt/@backup
+              rm -r /mnt/@backup
 
-              umount /mnt/{@,@backup}
+              echo "deleting @"
+              delete_subvolume_recursively /mnt/@
+              umount /mnt/@
+              rm -r /mnt/@
+
+              echo "creating blank /mnt/@"
+              mount /dev/root_vg/root /mnt
+              btrfs subvolume create /mnt/@
+              umount /mnt
             '';
           };
         };

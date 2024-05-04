@@ -75,25 +75,40 @@ in {
             unitConfig.DefaultDependencies = "no";
             serviceConfig.Type = "oneshot";
             script = ''
-              mkdir -p /mnt/{@,@backup}
+              IFS=$'\n'
+
+              delete_subvolume_recursively() {
+                local subvolume=$1
+                for subsubvolume in $(btrfs subvolume list -o $subvolume | cut --fields=9 --delimiter=' '); do
+                  delete_subvolume_recursively /mnt/$subsubvolume
+                done
+                echo "deleting $subvolume"
+                btrfs subvolume delete $subvolume
+              }
+
+              mkdir --parents /mnt/{@,@backup}
               mount -o subvol=@ /dev/root_vg/root /mnt/@
               mount -o subvol=@backup,compress=zstd,noatime /dev/root_vg/root /mnt/@backup
-              if [[ -e /mnt/@ ]]; then
-                  timestamp=$(date --date="@$(stat -c %Y /mnt/@)" "+%Y-%m-%-dT%H:%M:%S")
-                  btrfs subvolume snapshot -r /mnt/@ /mnt/@backup/$timestamp
-              fi
 
-              btrfs subvolume list -o /mnt/@/root |
-                cut -f9 -d' ' |
-                while read subvolume; do
-                  echo "deleting /@/$subvolume"
-                  btrfs subvolume delete /mnt/@/$subvolume
-                done &&
-                echo "deleting /@/root" &&
-                btrfs subvolume delete /mnt/@/root
+              timestamp=$(date --utc --date="@$(stat -c %Y /mnt/@)" +"%Y-%m-%dT%H:%M:%SZ")
+              echo "snapshotting /mnt/@ to /mnt/@backup/$timestamp"
+              btrfs subvolume snapshot -r /mnt/@ /mnt/@backup/$timestamp
 
-              echo "creating blank /@/root"
-              btrfs subvolume create /mnt/@/root
+              echo "deleting @"
+              delete_subvolume_recursively /mnt/@
+
+              echo "creating blank /mnt/@"
+              btrfs subvolume create /mnt/@
+
+              echo "deleting old backups"
+              # All backups older than 30 days
+              for backup in $(ls -1 /mnt/@backup); do
+                if [ $(date --date="$backup" +"%s") -lt $(date --date="30 days ago" +"%s") ]; then
+                  echo "deleting /mnt/@backup/$backup"
+                  delete_subvolume_recursively /mnt/@backup/$backup
+                fi
+              done
+
               umount /mnt/{@,@backup}
             '';
           };

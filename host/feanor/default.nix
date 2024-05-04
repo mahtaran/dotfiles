@@ -241,7 +241,7 @@ in {
     })
 
     (lib.mkIf (!onInstallMedia) {
-      hashedPassword = config.sops.secrets."mahtaran/password".path;
+      hashedPasswordFile = config.sops.secrets."mahtaran/password".path;
     })
 
     {

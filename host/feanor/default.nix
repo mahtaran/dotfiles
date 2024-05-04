@@ -75,7 +75,7 @@ in {
             unitConfig.DefaultDependencies = "no";
             serviceConfig.Type = "oneshot";
             script = ''
-              mkdir /mnt/{@,@backup}
+              mkdir -p /mnt/{@,@backup}
               mount -o subvol=@ /dev/root_vg/root /mnt/@
               mount -o subvol=@backup,compress=zstd,noatime /dev/root_vg/root /mnt/@backup
               if [[ -e /mnt/@ ]]; then
@@ -94,8 +94,7 @@ in {
 
               echo "creating blank /@/root"
               btrfs subvolume create /mnt/@/root
-              umount /mnt/@
-              umount /mnt/@backup
+              umount /mnt/{@,@backup}
             '';
           };
         };

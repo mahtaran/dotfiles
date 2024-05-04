@@ -20,9 +20,9 @@ in {
 
   sops = lib.mkIf (!onInstallMedia) {
     age = {
-      keyFile = "/home/mahtaran/.config/sops/age/keys.txt";
+      keyFile = "/persist/home/mahtaran/.config/sops/age/keys.txt";
       sshKeyPaths = [
-        "/etc/ssh/ssh_host_ed25519_key"
+        "/persist/etc/ssh/ssh_host_ed25519_key"
       ];
     };
     secrets = {

@@ -139,10 +139,6 @@ in {
         "Pictures"
         "Videos"
         {
-          directory = ".config/sops/age";
-          mode = "u=rwx,g=,o=";
-        }
-        {
           directory = ".gnupg";
           mode = "u=rwx,g=,o=";
         }
@@ -156,7 +152,12 @@ in {
         }
         "dotfiles"
       ];
-      files = [];
+      files = [
+        {
+          file = ".config/sops/age/keys.txt";
+          parentDirectory = {mode = "u=rwx,g=,o=";};
+        }
+      ];
     };
   };
 

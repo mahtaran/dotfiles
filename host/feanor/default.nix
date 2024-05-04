@@ -86,8 +86,8 @@ in {
                 btrfs subvolume delete $subvolume
               }
 
-              mkdir --parents /mnt/{@,@backup}
-              mount -o subvol=@ /dev/root_vg/root /mnt/@
+              mkdir /mnt
+              mount /dev/root_vg/root /mnt
               mount -o subvol=@backup,compress=zstd,noatime /dev/root_vg/root /mnt/@backup
 
               timestamp=$(date --utc --date="@$(stat -c %Y /mnt/@)" +"%Y-%m-%dT%H:%M:%SZ")
@@ -102,15 +102,11 @@ in {
                 fi
               done
               umount /mnt/@backup
-              rm -r /mnt/@backup
 
               echo "deleting @"
               delete_subvolume_recursively /mnt/@
-              umount /mnt/@
-              rm -r /mnt/@
 
               echo "creating blank /mnt/@"
-              mount /dev/root_vg/root /mnt
               btrfs subvolume create /mnt/@
               umount /mnt
             '';

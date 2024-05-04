@@ -1,6 +1,6 @@
 keys:
   - &user_mahtaran age1k9lqlzmpumn2x5ravmyrtnu44nhwzqanu8s0wv57amccvtlsud0qc2wenc
-  - &host_feanor age1m3fvful26zmrymxpv69ms2jj7cr4yksk65s2yg54sn5ehr9gp52s64tzcz
+  - &host_feanor age100vsh92w94np56zyf7umay3pv39593rjldy5mxvluslla0c9ufvq55cppt
 creation_rules:
   - path_regex: secret/user/mahtaran/[^/]+\.yaml$
     key_groups:

@@ -3,11 +3,9 @@
   lib,
   pkgs,
   inputs,
+  onInstallMedia,
   ...
-}: 
-let
-  onInstallMedia = builtins.pathExists /home/nixos;
-in {
+}: {
   imports = [
     ./hardware.nix
 
@@ -138,6 +136,10 @@ in {
         "Music"
         "Pictures"
         "Videos"
+        {
+          directory = ".config/sops/age";
+          mode = "u=rwx,g=,o=";
+        }
         {
           directory = ".gnupg";
           mode = "u=rwx,g=,o=";
@@ -306,7 +308,7 @@ in {
   };
 
   # List services that you want to enable:
-
+  
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;

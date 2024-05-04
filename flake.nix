@@ -42,11 +42,13 @@
 
   outputs = inputs @ {...}:
     let
+      onInstallMedia = builtins.pathExists /home/nixos;
       mkSystem = { entry, arch, extraModules, users, ... }:
         inputs.nixpkgs.lib.nixosSystem {
           system = arch;
           specialArgs = {
             inherit inputs;
+            inherit onInstallMedia;
           };
 
           modules = [
@@ -62,10 +64,14 @@
               home-manager = {
                 extraSpecialArgs = {
                   inherit inputs;
+                  inherit onInstallMedia;
                 };
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                sharedModules = [inputs.nur.hmModules.nur];
+                sharedModules = [
+                  inputs.sops-nix.homeManagerModules.sops
+                  inputs.nur.hmModules.nur
+                ];
 
                 users = users;
               };

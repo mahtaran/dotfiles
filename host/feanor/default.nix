@@ -137,14 +137,6 @@
         "Pictures"
         "Videos"
         {
-          directory = ".config/sops/age";
-          mode = "u=rwx,g=,o=";
-        }
-        {
-          directory = ".gnupg";
-          mode = "u=rwx,g=,o=";
-        }
-        {
           directory = ".ssh";
           mode = "u=rwx,g=,o=";
         }

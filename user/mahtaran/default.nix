@@ -247,6 +247,12 @@
     sshKeys = [ "C7FFB72E0527423AD470E132AA82C4EBCB1682E0" ];
   };
 
+  services.mullvad-vpn = {
+    enable = true;
+    # We will use the version with GUI for now
+    package = pkgs.mullvad-vpn;
+  };
+
   systemd.user.services = {
     import-gpg-key = lib.mkIf (!onInstallMedia) {
       Unit = {
